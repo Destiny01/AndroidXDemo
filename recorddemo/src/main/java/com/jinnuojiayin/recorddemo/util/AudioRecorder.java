@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 /**
  * @author xyl
  * 直接录制aac格式的文件：
+ * AudioRecord+编码器MediaCodec
  * 编码格式：A_AAC/MPEG4/LC/PS
  * 采样率：44100 HZ
  * 声道：单声道
