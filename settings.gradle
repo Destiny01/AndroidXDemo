@@ -1,1 +1,1 @@
-include ':mvp', ':retrofit', ':rxjava', ':dagger2', ':recorddemo'
+include ':mvp', ':retrofit', ':rxjava', ':dagger2', ':recorddemo', ':exoplayer', ':audioedit'

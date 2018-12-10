@@ -16,13 +16,15 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+
 /**
+ * 解码音频文件然后编码成aac
  * Created by xyl on 2016/3/31.
  */
 public class AudioCodec {
 
     private static final String TAG = "AudioCodec";
-    private String encodeType;
+    private String encodeType = MediaFormat.MIMETYPE_AUDIO_AAC;
     private String srcPath;
     private String dstPath;
     private MediaCodec mediaDecode;
@@ -47,15 +49,6 @@ public class AudioCodec {
 
     public static AudioCodec newInstance() {
         return new AudioCodec();
-    }
-
-    /**
-     * 设置编码器类型
-     *
-     * @param encodeType
-     */
-    public void setEncodeType(String encodeType) {
-        this.encodeType = encodeType;
     }
 
     /**
@@ -97,13 +90,7 @@ public class AudioCodec {
         }
         chunkPCMDataContainer = new ArrayList<>();
         initMediaDecode();//解码器
-
-        if (encodeType == MediaFormat.MIMETYPE_AUDIO_AAC) {
-            initAACMediaEncode();//AAC编码器
-        } else if (encodeType == MediaFormat.MIMETYPE_AUDIO_MPEG) {
-            initMPEGMediaEncode();//mp3编码器
-        }
-
+        initAACMediaEncode();//AAC编码器
     }
 
     /**

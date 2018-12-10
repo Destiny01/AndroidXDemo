@@ -31,7 +31,7 @@ import java.nio.ByteBuffer;
 public class AudioRecorder {
     private static final String TAG = "AudioRecorder";
     private int SAMPLE_RATE = 44100; //采样率 44100
-    private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO; //音频通道(单声道)
+    private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_STEREO; //音频通道(双声道)
     private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT; //音频格式
     private static final int AUDIO_SOURCE = MediaRecorder.AudioSource.MIC;  //音频源（麦克风）
     private String encodeType = MediaFormat.MIMETYPE_AUDIO_AAC;
@@ -270,7 +270,7 @@ public class AudioRecorder {
     private void addADTStoPacket(byte[] packet, int packetLen) {
         int profile = 2; // AAC LC
         int freqIdx = 4; // 44100 采样率
-        int chanCfg = 1; // CPE 声道数
+        int chanCfg = 2; // CPE 声道数
         // fill in ADTS data
         packet[0] = (byte) 0xFF;
         packet[1] = (byte) 0xF1;

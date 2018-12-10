@@ -4,13 +4,21 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jinnuojiayin.recorddemo.util.AudioCodec;
 import com.jinnuojiayin.recorddemo.util.AudioRecorder;
+import com.jinnuojiayin.recorddemo.util.aac.MediaUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -24,6 +32,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView timeTips;
     private RelativeLayout micLayout;
     private ImageView mic;
+    private Button btn_compose;
+    private Button btn_decode;
+    private String path;
+    private AudioCodec audioCodec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +51,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void initView() {
         timeTips = (TextView) findViewById(R.id.tv_video_time);
         micLayout = (RelativeLayout) findViewById(R.id.mic_img_relative);
+        btn_compose = findViewById(R.id.btn_compose);
+        btn_decode = findViewById(R.id.btn_decode);
         mic = (ImageView) findViewById(R.id.mic_img);
         timeTips.setVisibility(View.INVISIBLE);
     }
 
     public void initEvent() {
         micLayout.setOnClickListener(this);
+        btn_compose.setOnClickListener(this);
+        btn_decode.setOnClickListener(this);
+        path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        audioCodec = AudioCodec.newInstance();
     }
 
 
     @Override
     public void onClick(View v) {
-        requestPermission();
+        switch (v.getId()) {
+            case R.id.mic_img_relative://录音
+                requestPermission();
+                break;
+            case R.id.btn_compose://合成
+                File f = new File(Environment.getExternalStorageDirectory(), "MyAudio.aac");
+                List<String> voiceFiles = new ArrayList<>();
+                voiceFiles.add(f.getAbsolutePath());
+                voiceFiles.add(f.getAbsolutePath());
+                MediaUtils.composeVoiceFile(this, voiceFiles, "compose");
+                break;
+            case R.id.btn_decode://解码mp3成aac
+                audioCodec.setIOPath(path + "/encode.mp3", path + "/code.aac");
+                audioCodec.prepare();
+                audioCodec.startAsync();
+                audioCodec.setOnCompleteListener(new AudioCodec.OnCompleteListener() {
+                    @Override
+                    public void completed() {
+                        audioCodec.release();
+                    }
+                });
+                break;
+        }
     }
 
     /**
