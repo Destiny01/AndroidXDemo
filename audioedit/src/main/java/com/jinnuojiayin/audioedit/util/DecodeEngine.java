@@ -74,6 +74,8 @@ public class DecodeEngine {
     public boolean convertMusicFileToWaveFile(String musicFileUrl, String decodeFileUrl,
                                               DecodeOperateInterface decodeOperateInterface) {
 
+//        boolean success =
+//                decodeMusicFile(musicFileUrl, decodeFileUrl, false, -1, -1, decodeOperateInterface);
         boolean success =
                 decodeMusicFile(musicFileUrl, decodeFileUrl, true, -1, -1, decodeOperateInterface);
         if (decodeOperateInterface != null) {

@@ -189,8 +189,15 @@ public class AudioEditUtil {
      * @param startTime  源音频起始时间
      * @param progress1  源音频音频强度
      * @param progress2  附加音频音频强度
+     * @param isWav  是否是wav格式
      */
-    public static void mixAudioWithSame(Audio srcAudio, Audio coverAudio, Audio outAudio, float startTime, float progress1, float progress2) {
+    public static void mixAudioWithSame(Audio srcAudio, Audio coverAudio, Audio outAudio, float startTime, float progress1, float progress2, boolean isWav) {
+        int WAVE_HEAD_SIZE = 44;
+        if (isWav) {
+            WAVE_HEAD_SIZE = 44;
+        } else {
+            WAVE_HEAD_SIZE = 0;
+        }
 
         String srcWavePath = srcAudio.getPath();
         String coverWavePath = coverAudio.getPath();
@@ -265,9 +272,13 @@ public class AudioEditUtil {
         // 删除源文件,
         //new File(srcWavePath).delete();
         // 转换临时文件为源文件
-        AudioEncodeUtil.convertPcm2Wav(tempOutPcmPath, outAudio.getPath(), sampleRate, channels, bitNum);
+        if (isWav) {
+            AudioEncodeUtil.convertPcm2Wav(tempOutPcmPath, outAudio.getPath(), sampleRate, channels, bitNum);
+        } else {
+
+        }
         //删除临时文件
-        new File(tempOutPcmPath).delete();
+        //new File(tempOutPcmPath).delete();
     }
 
 
