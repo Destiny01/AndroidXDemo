@@ -170,41 +170,6 @@ public class AudioTaskHandler {
 
     }
 
-    /**
-     * 两个pcm文件合成
-     *
-     * @param path1
-     * @param path2
-     * @param progress1
-     * @param progress2
-     */
-    private void mixPcmAudio(String path1, String path2, float progress1, float progress2) {
-        String fileName1 = new File(path1).getName();
-        fileName1 = fileName1.substring(0, fileName1.lastIndexOf('.')) + Constant.SUFFIX_PCM;
-        String fileName2 = new File(path2).getName();
-        fileName2 = fileName2.substring(0, fileName2.lastIndexOf('.')) + Constant.SUFFIX_PCM;
-        String destPath1 = FileUtils.getAudioEditStorageDirectory() + File.separator + fileName1;
-        String destPath2 = FileUtils.getAudioEditStorageDirectory() + File.separator + fileName2;
-        decodeAudio(path1, destPath1);
-        decodeAudio(path2, destPath2);
-        if (!FileUtils.checkFileExist(destPath1)) {
-            ToastUtil.showToast("解码失败" + destPath1);
-            return;
-        }
-        if (!FileUtils.checkFileExist(destPath2)) {
-            ToastUtil.showToast("解码失败" + destPath2);
-            return;
-        }
-        Audio audio1 = getAudioFromPath(destPath1);
-        Audio audio2 = getAudioFromPath(destPath2);
-        Audio outAudio = new Audio();
-        outAudio.setPath(new File(new File(destPath1).getParentFile(), "out.pcm").getAbsolutePath());
-        if (audio1 != null && audio2 != null) {
-            AudioEditUtil.mixAudioWithSame(audio1, audio2, outAudio, 0, progress1, progress2, false);
-        }
-        String msg = "合成完成";
-        EventBus.getDefault().post(new AudioMsg(AudioTaskCreator.ACTION_AUDIO_MIX, outAudio.getPath(), msg));
-    }
 
     private void decodeAudio(String path, String destPath) {
         final File file = new File(path);
