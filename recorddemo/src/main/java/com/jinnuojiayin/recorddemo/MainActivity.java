@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         void jointAudioProgress(float progress);
     }
+
     /**
      *
      */
@@ -230,5 +231,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static void showToast(Context ctx, String msg) {
         Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+    }
+
+
+    public int getPositionFromPcm(float time) {
+        int sampleRate = 44100;//HZ
+        int byteNum = 16 / 8;
+        int channels = 1;
+        int position = (int) (time * sampleRate * channels * byteNum);
+        position = position / (byteNum * channels) * (byteNum * channels);
+        return position;
     }
 }
