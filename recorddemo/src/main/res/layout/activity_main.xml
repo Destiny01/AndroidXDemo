@@ -50,4 +50,12 @@
         android:layout_height="wrap_content"
         android:textAllCaps="false"
         android:text="解码mp3成aac"/>
+    <Button
+        android:id="@+id/btn_joint"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="pcm文件拼接"/>
 </LinearLayout>

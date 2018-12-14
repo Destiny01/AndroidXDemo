@@ -17,6 +17,8 @@ import com.jinnuojiayin.recorddemo.util.AudioRecorder;
 import com.jinnuojiayin.recorddemo.util.aac.MediaUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView mic;
     private Button btn_compose;
     private Button btn_decode;
+    private Button btn_joint;
     private String path;
     private AudioCodec audioCodec;
 
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         micLayout = (RelativeLayout) findViewById(R.id.mic_img_relative);
         btn_compose = findViewById(R.id.btn_compose);
         btn_decode = findViewById(R.id.btn_decode);
+        btn_joint = findViewById(R.id.btn_joint);
         mic = (ImageView) findViewById(R.id.mic_img);
         timeTips.setVisibility(View.INVISIBLE);
     }
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         micLayout.setOnClickListener(this);
         btn_compose.setOnClickListener(this);
         btn_decode.setOnClickListener(this);
+        btn_joint.setOnClickListener(this);
         path = Environment.getExternalStorageDirectory().getAbsolutePath();
         audioCodec = AudioCodec.newInstance();
     }
@@ -90,9 +95,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
                 break;
+            case R.id.btn_joint://拼接pcm
+                //String[] paths = {path+"/0.pcm",path+"/0.pcm",path+"/0.pcm"};
+                List<String> paths = new ArrayList<>();
+                for (int i = 0; i < 100; i++) {
+                    paths.add(path + "/0.pcm");
+                }
+                String jointPcm = path + "/joint.pcm";
+                jointFile(paths, jointPcm, new JointPcmAudio() {
+                    @Override
+                    public void jointAudioComplete() {
+                        Toast.makeText(MainActivity.this, "拼接完毕", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void jointAudioProgress(float progress) {
+                        Toast.makeText(MainActivity.this, progress + "%", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
         }
     }
 
+    /**
+     * 需求:将两个pcm格式音频文件合并为1个
+     *
+     * @param partsPaths     各部分路径
+     * @param unitedFilePath 合并后路径
+     */
+    public void jointFile(List<String> partsPaths, String unitedFilePath, JointPcmAudio jointPcmAudio) {
+        try {
+            File unitedFile = new File(unitedFilePath);
+            FileOutputStream fos = new FileOutputStream(unitedFile);
+            RandomAccessFile ra = null;
+            for (int i = 0; i < partsPaths.size(); i++) {
+                ra = new RandomAccessFile(partsPaths.get(i), "r");
+                byte[] buffer = new byte[1024 * 8];
+                int len = 0;
+                while ((len = ra.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                }
+                if (jointPcmAudio != null) {
+                    jointPcmAudio.jointAudioProgress(i * 100f / partsPaths.size());
+                }
+            }
+            ra.close();
+            fos.close();
+            if (jointPcmAudio != null) {
+                jointPcmAudio.jointAudioComplete();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public interface JointPcmAudio {
+        void jointAudioComplete();
+
+        void jointAudioProgress(float progress);
+    }
     /**
      *
      */
